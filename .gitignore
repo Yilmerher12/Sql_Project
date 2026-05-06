@@ -1,0 +1,18 @@
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs y Temporales
+*.log
+*.tmp
+*.bak
+*.sql.bak
+
+# Archivos de Sistema
+.DS_Store
+Thumbs.db
+
+# Configuración de base de datos local (si creas archivos .env)
+.env

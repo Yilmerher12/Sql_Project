@@ -1,8 +1,12 @@
 USE waste_management;
 
--- ==========================================================
--- 1. POBLANDO LA TABLA: trucks (45 registros)
--- ==========================================================
+-- 1| TABLA DE CATEGORÍAS: Localidades
+INSERT INTO localities (locality_name) VALUES
+('Chapinero'), ('Usaquén'), ('Fontibón'), ('Kennedy'), ('Suba'), 
+('Teusaquillo'), ('Engativá'), ('Bosa'), ('Tunjuelito'), ('Antonio Nariño'), 
+('Los Mártires'), ('Ciudad Bolívar'), ('Barrios Unidos'), ('Santa Fe');
+
+-- 2. Tabla neighborhoods (Barrios)
 INSERT INTO trucks (truck_plate, truck_brand, truck_capacity_tons, truck_status) VALUES
 ('SNA-001', 'Hino', 10.5, 'active'), ('SNA-002', 'Hino', 10.5, 'active'),
 ('SNA-003', 'Freightliner', 15.0, 'active'), ('SNA-004', 'Freightliner', 15.0, 'maintenance'),
@@ -28,37 +32,55 @@ INSERT INTO trucks (truck_plate, truck_brand, truck_capacity_tons, truck_status)
 ('SNA-043', 'Hino', 10.5, 'active'), ('SNA-044', 'Freightliner', 15.0, 'active'),
 ('SNA-045', 'International', 12.0, 'active');
 
--- ==========================================================
--- 2. POBLANDO LA TABLA: neighborhoods (45 registros)
--- ==========================================================
-INSERT INTO neighborhoods (neighborhood_name, neighborhood_locality, neighborhood_estimated_houses) VALUES
-('Chapinero Alto', 'Chapinero', 450), ('Rosales', 'Chapinero', 300),
-('Chico Norte', 'Chapinero', 600), ('Cedritos', 'Usaquén', 1200),
-('Santa Ana', 'Usaquén', 250), ('San Cristóbal Norte', 'Usaquén', 800),
-('Modelia', 'Fontibón', 950), ('Hayuelos', 'Fontibón', 1100),
-('Ciudad Salitre', 'Fontibón', 1500), ('Kennedy Central', 'Kennedy', 2000),
-('Castilla', 'Kennedy', 1800), ('Patio Bonito', 'Kennedy', 2500),
-('Suba Centro', 'Suba', 2200), ('La Colina', 'Suba', 1300),
-('Lombardía', 'Suba', 900), ('Teusaquillo Centro', 'Teusaquillo', 500),
-('Galerías', 'Teusaquillo', 700), ('La Soledad', 'Teusaquillo', 400),
-('Engativá Pueblo', 'Engativá', 1400), ('Villas de Granada', 'Engativá', 1600),
-('Garces Navas', 'Engativá', 1900), ('Bosa Centro', 'Bosa', 2100),
-('El Recreo', 'Bosa', 2300), ('Metrovivienda', 'Bosa', 1700),
-('Venecia', 'Tunjuelito', 850), ('San Vicente', 'Tunjuelito', 600),
-('Restrepo', 'Antonio Nariño', 900), ('La Fragua', 'Antonio Nariño', 450),
-('Paloquemao', 'Los Mártires', 300), ('Santa Isabel', 'Los Mártires', 750),
-('Quinta Paredes', 'Teusaquillo', 550), ('Niza', 'Suba', 1000),
-('Pasadena', 'Suba', 850), ('Mazuren', 'Suba', 1150),
-('Lisboa', 'Usaquén', 700), ('Toberín', 'Usaquén', 950),
-('El Tunal', 'Tunjuelito', 1800), ('Candelaria La Nueva', 'Ciudad Bolívar', 2400),
-('El Perdomo', 'Ciudad Bolívar', 2100), ('Arborizadora Alta', 'Ciudad Bolívar', 2600),
-('San Felipe', 'Barrios Unidos', 500), ('Siete de Agosto', 'Barrios Unidos', 650),
-('Metrópolis', 'Barrios Unidos', 800), ('Las Nieves', 'Santa Fe', 350),
-('La Macarena', 'Santa Fe', 420);
+-- 3. Tabla: neighborhoods (Barrios)
+INSERT INTO neighborhoods (neighborhood_name, locality_id, neighborhood_estimated_houses) VALUES
+('Chapinero Alto', 1, 450),
+('Rosales', 1, 300), 
+('Chico Norte', 1, 600), 
+('Cedritos', 2, 1200), 
+('Santa Ana', 2, 250), 
+('San Cristóbal Norte', 2, 800),
+('Modelia', 3, 950), 
+('Hayuelos', 3, 1100), 
+('Ciudad Salitre', 3, 1500), 
+('Kennedy Central', 4, 2000), 
+('Castilla', 4, 1800), 
+('Patio Bonito', 4, 2500),
+('Suba Centro', 5, 2200), 
+('La Colina', 5, 1300), 
+('Lombardía', 5, 900), 
+('Teusaquillo Centro', 6, 500), 
+('Galerías', 6, 700), 
+('La Soledad', 6, 400),
+('Engativá Pueblo', 7, 1400), 
+('Villas de Granada', 7, 1600), 
+('Garces Navas', 7, 1900), 
+('Bosa Centro', 8, 2100), 
+('El Recreo', 8, 2300), 
+('Metrovivienda', 8, 1700),
+('Venecia', 9, 850), 
+('San Vicente', 9, 600), 
+('Restrepo', 10, 900), 
+('La Fragua', 10, 450),
+('Paloquemao', 11, 300), 
+('Santa Isabel', 11, 750),
+('Quinta Paredes', 6, 550), 
+('Niza', 5, 1000), 
+('Pasadena', 5, 850), 
+('Mazuren', 5, 1150),
+('Lisboa', 2, 700), 
+('Toberín', 2, 950),
+('El Tunal', 9, 1800), 
+('Candelaria La Nueva', 12, 2400), 
+('El Perdomo', 12, 2100), 
+('Arborizadora Alta', 12, 2600),
+('San Felipe', 13, 500), 
+('Siete de Agosto', 13, 650),
+('Metrópolis', 13, 800),
+('Las Nieves', 14, 350), 
+('La Macarena', 14, 420);
 
--- ==========================================================
--- 3. POBLANDO LA TABLA: routes (25 registros)
--- ==========================================================
+-- 4. Tabla: routes (Rutas)
 INSERT INTO routes (route_name, route_start_hour, route_end_hour) VALUES
 ('Ruta Norte Residencial', '06:00:00', '14:00:00'),
 ('Ruta Norte Comercial', '20:00:00', '04:00:00'),
@@ -86,10 +108,7 @@ INSERT INTO routes (route_name, route_start_hour, route_end_hour) VALUES
 ('Ruta Venecia-Tunal', '05:00:00', '13:00:00'),
 ('Ruta Galerías-Soledad', '07:00:00', '14:00:00');
 
--- ==========================================================
--- 4. POBLANDO LA TABLA: route_neighborhoods (N:M)
--- ==========================================================
--- Cada ruta cubre al menos 2 barrios
+-- 5. Tabla de las rutas con sus barrios (Relación N:M)
 INSERT INTO route_neighborhoods (route_id, neighborhood_id) VALUES
 (1, 4), (1, 5), (2, 6), (2, 35), (3, 38), (3, 39), (4, 7), (4, 8),
 (5, 9), (5, 43), (6, 10), (6, 11), (7, 13), (7, 14), (8, 1), (8, 2),
@@ -99,10 +118,7 @@ INSERT INTO route_neighborhoods (route_id, neighborhood_id) VALUES
 (21, 29), (21, 30), (22, 32), (22, 33), (23, 7), (23, 9), (24, 25), (24, 37),
 (25, 17), (25, 31);
 
--- ==========================================================
--- 5. POBLANDO LA TABLA: collections (Historial Reciente)
--- ==========================================================
--- Fechas desde el 1 de abril de 2026 hasta el 5 de mayo de 2026.
+-- 6. Tabla de las recolecciones, relacionando camiones, rutas y barrios (Tabla transaccional)
 INSERT INTO collections (truck_id, route_id, collection_date, collection_actual_weight_tons, collection_observations) VALUES
 (1, 1, '2026-04-01', 8.50, 'Operación normal'),
 (2, 2, '2026-04-01', 9.20, 'Exceso de residuos comerciales'),
@@ -124,7 +140,6 @@ INSERT INTO collections (truck_id, route_id, collection_date, collection_actual_
 (21, 18, '2026-04-09', 11.20, 'Normal'),
 (22, 19, '2026-04-10', 16.80, 'Alta carga en Venecia'),
 (24, 20, '2026-04-10', 13.10, 'Normal'),
--- Segunda quincena de Abril
 (1, 21, '2026-04-15', 8.20, 'Operación nocturna en Mártires'),
 (2, 22, '2026-04-15', 9.60, 'Normal'),
 (3, 23, '2026-04-16', 14.80, 'Capacidad máxima alcanzada'),
@@ -145,7 +160,6 @@ INSERT INTO collections (truck_id, route_id, collection_date, collection_actual_
 (21, 13, '2026-04-23', 11.60, 'Normal'),
 (22, 14, '2026-04-24', 16.10, 'Normal'),
 (24, 15, '2026-04-24', 13.40, 'Normal'),
--- Mayo 2026 (Reciente)
 (25, 1, '2026-05-01', 9.30, 'Festivo: Menos basura residencial'),
 (26, 2, '2026-05-01', 14.20, 'Festivo: Mucha basura en zonas comerciales'),
 (27, 3, '2026-05-02', 11.10, 'Normal'),
@@ -155,4 +169,6 @@ INSERT INTO collections (truck_id, route_id, collection_date, collection_actual_
 (32, 7, '2026-05-04', 14.40, 'Inicia semana con alta carga'),
 (33, 8, '2026-05-04', 11.50, 'Normal'),
 (34, 9, '2026-05-05', 17.20, 'Normal'),
-(36, 10, '2026-05-05', 13.90, 'Sin novedades en Engativá');
+(36, 10, '2026-05-05', 13.90, 'Sin novedades en Engativá'),
+(37, 11, '2026-05-06', NULL, NULL),
+(38, 12, '2026-05-06', 12.5, NULL);

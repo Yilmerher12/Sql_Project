@@ -115,3 +115,7 @@ HAVING AVG(precio_tiquete) > 500;          -- PASO 3: Filtra el cálculo del pro
 | **MIN/MAX** | Sí | Todos | No |
 | **AVG** | Sí | Numérico | No |
 | **GROUP BY** | **No** (Crea grupo) | Todos | N/A |
+
+## Recursos Adicionales
+
+- Ejemplos de consultas con base al dominio de `recoleccion de residuos`: [Consultas](/sql/03-dql-queries/06-week-aggregate-function/queries.sql)

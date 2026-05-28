@@ -21,6 +21,8 @@ sql/
 │   ├── 06-week-aggregate-function/
 │   ├── 07-week-null-and-constraints/
 │   ├── 09-week-inners-left-right/
+│   ├── 10-week-cross-self-joins/
+│   ├── 11-week-subqueries/
 │   └── README.md
 │
 └── README.md

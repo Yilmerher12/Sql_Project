@@ -1,0 +1,15 @@
+services:
+  db:
+    build: .
+    container_name: waste_management_db
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB:       waste_management
+      POSTGRES_USER:     waste_user
+      POSTGRES_PASSWORD: waste_pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

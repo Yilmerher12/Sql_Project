@@ -1,34 +1,28 @@
 # Semana 11 — Subqueries (Subconsultas)
 
-## Tema de la semana
-
-Una **subconsulta** (subquery) es una consulta SQL escrita dentro de otra consulta. El motor ejecuta primero la consulta interna y usa su resultado en la consulta externa.
-
-Esta semana se trabajaron cuatro formas distintas de usar subconsultas, cada una con un propósito diferente.
+En esta semana aprendí que una subconsulta es simplemente una consulta SQL escrita **dentro de otra consulta**. Entendí que el motor ejecuta primero la consulta interna y usa ese resultado en la consulta externa, sin que yo tenga que hacerlo en dos pasos separados.
 
 ---
 
-## Tipos de subconsultas
+## 1. Subconsulta escalar en WHERE
 
-### 1. Subconsulta escalar en WHERE
-
-Devuelve **un solo valor** y se usa para comparar fila por fila.
+Aprendí que una subconsulta escalar devuelve **un solo valor** y se puede usar directamente en una comparación. Lo interesante es que se evalúa **por cada fila** de la consulta externa:
 
 ```sql
 WHERE capacity_tons > (
     SELECT AVG(capacity_tons)
     FROM waste_facilities
-    WHERE facility_type = wf.facility_type
+    WHERE facility_type = wf.facility_type  -- compara contra el tipo de esa fila específica
 )
 ```
 
-La subconsulta se evalúa **por cada fila** de la consulta externa. Aquí calcula el promedio del tipo de instalación al que pertenece esa fila y compara.
+Entendí que aquí el motor calcula el promedio del tipo de instalación de cada fila y lo compara fila por fila. Eso lo hace una subconsulta **correlacionada**.
 
 ---
 
-### 2. Subconsulta escalar en SELECT
+## 2. Subconsulta escalar en SELECT
 
-Devuelve **un solo valor global** que aparece como columna en cada fila del resultado.
+Aprendí que también puedo poner una subconsulta dentro del `SELECT` para agregar un dato estadístico global como si fuera una columna más:
 
 ```sql
 SELECT
@@ -37,29 +31,29 @@ SELECT
 FROM waste_facilities;
 ```
 
-Útil para mostrar un dato estadístico de referencia junto a cada registro.
+Este promedio es el mismo para todas las filas, pero sirve como punto de comparación en el reporte.
 
 ---
 
-### 3. NOT EXISTS — registros sin actividad
+## 3. NOT EXISTS — registros sin actividad
 
-`EXISTS` evalúa si la subconsulta devuelve **al menos una fila** (retorna `TRUE` o `FALSE`). Con `NOT EXISTS` se detectan registros que no tienen ninguna fila relacionada en otra tabla (huérfanos).
+Entendí que `EXISTS` evalúa si una subconsulta devuelve al menos una fila, y devuelve `TRUE` o `FALSE`. Con `NOT EXISTS` puedo detectar los registros que no tienen ninguna fila relacionada en otra tabla:
 
 ```sql
 WHERE NOT EXISTS (
-    SELECT 1
+    SELECT 1  -- el valor no importa, solo si existe la fila
     FROM facility_inspections fi
     WHERE fi.facility_id = wf.facility_id
 )
 ```
 
-Se usa `SELECT 1` porque el valor no importa, solo importa si existe o no la fila.
+Aprendí que se usa `SELECT 1` porque el motor no necesita saber qué devuelve la subconsulta, solo si devuelve algo.
 
 ---
 
-### 4. Tabla derivada en FROM
+## 4. Tabla derivada en FROM
 
-La subconsulta se escribe **dentro del FROM** y actúa como una tabla temporal en memoria. Es obligatorio ponerle un alias.
+Aprendí que puedo escribir una subconsulta dentro del `FROM` y tratarla como si fuera una tabla temporal. Es obligatorio ponerle un alias:
 
 ```sql
 FROM (
@@ -71,11 +65,11 @@ FROM (
 WHERE stats.total > 2
 ```
 
-Permite aplicar filtros (`WHERE`) sobre resultados agregados, algo que no se puede hacer directamente con `HAVING` en todos los casos.
+Entendí que esto me permite aplicar un `WHERE` sobre el resultado de una agregación, algo que no se puede hacer directamente sobre un `HAVING` en todos los casos.
 
 ---
 
-## Consultas del archivo
+## 5. Consultas del archivo
 
 | Consulta | Tipo | Descripción |
 |---|---|---|
@@ -104,3 +98,9 @@ Permite aplicar filtros (`WHERE`) sobre resultados agregados, algo que no se pue
 | `inspection_id` | SERIAL PK | Identificador único |
 | `facility_id` | INT FK | Referencia a `waste_facilities` |
 | `inspection_date` | DATE | Fecha de la inspección |
+
+---
+
+## Recursos Adicionales
+
+- Consultas aplicadas al dominio de residuos: [Ver queries](/sql/03-dql-queries/11-week-subqueries/queries.sql)

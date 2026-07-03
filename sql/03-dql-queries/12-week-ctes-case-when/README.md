@@ -1,53 +1,46 @@
 # Semana 12 — CTEs y CASE WHEN
 
-## Tema de la semana
-
-Esta semana se combinaron dos herramientas de SQL avanzado:
-
-- **CTE (Common Table Expression):** Una consulta nombrada y temporal que se define antes de la consulta principal con `WITH`.
-- **CASE WHEN:** Una expresión condicional que clasifica valores dentro de una consulta, similar a un `if/else`.
+En esta semana aprendí dos herramientas que me ayudan a escribir consultas más organizadas y legibles: los **CTEs** para dividir la lógica en pasos, y **CASE WHEN** para clasificar valores con condiciones.
 
 ---
 
-## Concepto: CTE (Common Table Expression)
+## 1. CTE — Common Table Expression
 
-Un CTE se declara con `WITH nombre AS (...)` y se puede usar como si fuera una tabla dentro de la consulta principal que le sigue. No se guarda en disco, existe solo durante esa ejecución.
-
-**¿Para qué sirve?**
-- Dividir consultas complejas en partes más legibles
-- Reutilizar un resultado parcial varias veces sin repetir código
-- Encadenar múltiples pasos de transformación
-
-**Estructura básica:**
+Aprendí que un CTE es una consulta con nombre que se define antes de la consulta principal usando `WITH`. No guarda datos en disco, solo existe durante esa ejecución.
 
 ```sql
 WITH nombre_cte AS (
     SELECT ...
     FROM ...
 )
-SELECT ...
-FROM nombre_cte;
+SELECT * FROM nombre_cte;
 ```
 
-**Dos CTEs encadenados:**
+Entendí que la ventaja no es hacer algo que no se podía hacer antes, sino **organizar** la lógica. En lugar de meter subconsultas anidadas y difíciles de leer, puedo dividir el problema en pasos con nombres que explican qué hace cada parte.
+
+### CTEs encadenados
+
+También aprendí que puedo definir varios CTEs en secuencia, donde el segundo puede usar el resultado del primero:
 
 ```sql
-WITH primer_cte AS (
-    SELECT ...
+WITH primer_paso AS (
+    SELECT category, SUM(value) AS total
+    FROM items
+    GROUP BY category
 ),
-segundo_cte AS (
-    SELECT ...
-    FROM primer_cte
-    WHERE ...
+segundo_paso AS (
+    SELECT category
+    FROM primer_paso
+    WHERE total > (SELECT AVG(total) FROM primer_paso)
 )
-SELECT * FROM segundo_cte;
+SELECT * FROM segundo_paso;
 ```
 
 ---
 
-## Concepto: CASE WHEN
+## 2. CASE WHEN
 
-Permite clasificar o transformar valores fila por fila dentro de una consulta.
+Aprendí que `CASE WHEN` es como un `if/else` dentro de SQL. Me permite clasificar o transformar valores fila por fila:
 
 ```sql
 CASE
@@ -57,33 +50,33 @@ CASE
 END AS escala_operativa
 ```
 
-PostgreSQL evalúa las condiciones **en orden** y usa el primer `WHEN` que se cumpla. El `ELSE` actúa como caso por defecto.
+Entendí que PostgreSQL evalúa las condiciones **en orden** y usa el primer `WHEN` que se cumpla. El `ELSE` es el caso por defecto si ninguna condición se cumple.
 
-**COUNT condicional con CASE WHEN:**
+### COUNT condicional con CASE WHEN
 
-Una técnica útil es contar solo los registros que cumplen una condición usando `CASE` dentro de `COUNT`:
+Una técnica que me pareció muy útil es contar solo los registros que cumplen una condición dentro de un `COUNT`:
 
 ```sql
 COUNT(CASE WHEN escala_operativa = 'Gran Escala' THEN 1 END) AS gran_escala
 ```
 
-Si la condición no se cumple, `CASE` devuelve `NULL` y `COUNT` ignora los `NULL` — por eso solo cuenta los que sí cumplen.
+Aprendí que cuando la condición no se cumple, `CASE` devuelve `NULL`, y `COUNT` ignora los `NULL` — entonces solo cuenta los que sí cumplen.
 
 ---
 
-## Consultas del archivo
+## 3. Consultas del archivo
 
 | Consulta | Descripción |
 |---|---|
-| 1 | CTE simple: cuenta recolecciones por instalación y clasifica por escala con `CASE WHEN` |
-| 2 | Dos CTEs encadenados: el primero agrupa toneladas por tipo, el segundo filtra los tipos por encima del promedio |
+| 1 | CTE simple que cuenta recolecciones por instalación y la clasifica por escala con `CASE WHEN` |
+| 2 | Dos CTEs encadenados: el primero agrupa toneladas por tipo, el segundo filtra los que están por encima del promedio |
 | 3 | CTE + COUNT condicional: por tipo, cuenta cuántas instalaciones hay en cada banda de escala |
 
 ---
 
 ## Tablas creadas esta semana
 
-**`facilities`** — Instalaciones de gestión de residuos (versión semana 12).
+**`facilities`** — Instalaciones de gestión de residuos.
 
 | Columna | Tipo | Descripción |
 |---|---|---|
@@ -100,3 +93,9 @@ Si la condición no se cumple, `CASE` devuelve `NULL` y `COUNT` ignora los `NULL
 | `facility_id` | INT FK | Referencia a `facilities` |
 | `tons_received` | DECIMAL | Toneladas recibidas en esa recolección |
 | `collected_at` | DATE | Fecha de la recolección |
+
+---
+
+## Recursos Adicionales
+
+- Consultas aplicadas al dominio de residuos: [Ver queries](/sql/03-dql-queries/12-week-ctes-case-when/queries.sql)

@@ -1,33 +1,17 @@
 # Semana 10 — CROSS JOIN y SELF JOIN
 
-## Tema de la semana
-
-Esta semana se trabajaron dos tipos de JOIN especiales que permiten relacionar una tabla **consigo misma** (SELF JOIN) o combinar cada fila de una tabla con cada fila de otra sin condición de unión (CROSS JOIN).
-
-El foco principal fue el **SELF JOIN**, que se usa cuando los datos tienen una **jerarquía interna**: un registro padre que puede tener varios registros hijos dentro de la misma tabla.
+En esta semana aprendí a relacionar una tabla **consigo misma**, algo que no había visto antes. Entendí que esto es posible cuando los datos tienen una jerarquía interna, donde un registro puede ser "padre" de otro dentro de la misma tabla.
 
 ---
 
-## Concepto: SELF JOIN
+## 1. SELF JOIN — Unión de una tabla consigo misma
 
-Un SELF JOIN ocurre cuando una tabla se une **a sí misma** usando dos alias distintos. Esto es posible gracias a una columna `parent_id` que apunta al `id` de otro registro en la misma tabla.
+Aprendí que un SELF JOIN no es un tipo de JOIN nuevo, sino simplemente usar `INNER JOIN` o `LEFT JOIN` sobre la misma tabla dos veces, con **alias distintos** para diferenciar quién es el padre y quién es el hijo.
 
-**Ejemplo del dominio:**
-
-La tabla `waste_categories` representa una jerarquía de residuos:
-
-```
-Material Reciclable        ← Nivel 0 (raíz, parent_id = NULL)
-  ├── Plásticos            ← Nivel 1
-  │     ├── Botellas PET   ← Nivel 2
-  │     └── Envases de PVC ← Nivel 2
-  └── Papel y Cartón       ← Nivel 1
-        └── Cajas de Embalaje ← Nivel 2
-```
-
-Para consultar esta jerarquía, se une la tabla consigo misma usando dos roles:
+Lo que hace posible esto es tener una columna `parent_id` que apunta al `id` de otro registro en la misma tabla:
 
 ```sql
+-- 'child' es el alias del registro hijo, 'parent' es el alias del registro padre
 SELECT
     child.category_name  AS subcategoria,
     parent.category_name AS categoria_padre
@@ -35,20 +19,20 @@ FROM waste_categories child
 INNER JOIN waste_categories parent ON child.parent_category_id = parent.category_id;
 ```
 
-- `child` → alias para los registros hijos
-- `parent` → alias para los registros padres
-- La condición une el `parent_category_id` del hijo con el `category_id` del padre
+Entendí que la clave está en la condición `ON`: une el `parent_category_id` del hijo con el `category_id` del padre. Sin eso, la consulta no sabría cómo conectarlos.
 
 ---
 
-## Diferencia entre INNER y LEFT en SELF JOIN
+## 2. Diferencia entre INNER y LEFT en un SELF JOIN
 
-| Tipo | Resultado |
+Aprendí que la elección entre INNER y LEFT cambia qué registros aparecen:
+
+| Tipo | ¿Qué muestra? |
 |---|---|
-| `INNER JOIN` | Solo muestra los nodos que tienen padre (excluye la raíz) |
-| `LEFT JOIN` | Muestra todos, incluida la raíz (su padre aparece como NULL) |
+| `INNER JOIN` | Solo los nodos que tienen padre (la raíz queda excluida) |
+| `LEFT JOIN` | Todos los nodos, incluida la raíz (su padre aparece como NULL) |
 
-Con `COALESCE` se puede etiquetar la raíz:
+Para que la raíz aparezca con una etiqueta legible y no como NULL, aprendí a usar `COALESCE`:
 
 ```sql
 COALESCE(parent.category_name, 'Categoría Raíz')
@@ -56,24 +40,45 @@ COALESCE(parent.category_name, 'Categoría Raíz')
 
 ---
 
-## Consultas del archivo
+## 3. La jerarquía del dominio
+
+En el proyecto de gestión de residuos, usé la tabla `waste_categories` para representar los tipos de residuos en tres niveles:
+
+```
+Material Reciclable        ← Nivel 0 (raíz, sin padre)
+  ├── Plásticos            ← Nivel 1
+  │     ├── Botellas PET   ← Nivel 2
+  │     └── Envases de PVC ← Nivel 2
+  └── Papel y Cartón       ← Nivel 1
+        └── Cajas de Embalaje ← Nivel 2
+```
+
+---
+
+## 4. Consultas del archivo
 
 | Consulta | Descripción |
 |---|---|
-| 1 | SELF JOIN básico — subcategorías con su categoría padre |
-| 2 | LEFT JOIN — incluye la raíz, etiquetada con COALESCE |
-| 3 | Contar hijos directos por categoría padre |
+| 1 | SELF JOIN básico: muestra cada subcategoría con su categoría padre |
+| 2 | LEFT JOIN: incluye la raíz, etiquetada con COALESCE |
+| 3 | Contar hijos directos por cada categoría padre |
 | 4 | Dos niveles en una sola consulta: nieto → hijo → abuelo |
 
 ---
 
 ## Tabla creada esta semana
 
-**`waste_categories`** — Categoría auto-referencial de residuos.
+**`waste_categories`** — Categorías de residuos con estructura auto-referencial.
 
 | Columna | Tipo | Descripción |
 |---|---|---|
 | `category_id` | SERIAL PK | Identificador único |
 | `category_name` | VARCHAR | Nombre de la categoría |
 | `category_risk` | VARCHAR | Nivel de riesgo (default: 'Bajo') |
-| `parent_category_id` | INT FK | Referencia al padre en la misma tabla |
+| `parent_category_id` | INT FK | Apunta al padre dentro de la misma tabla |
+
+---
+
+## Recursos Adicionales
+
+- Consultas aplicadas al dominio de residuos: [Ver queries](/sql/03-dql-queries/10-week-cross-self-joins/queries.sql)
